@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Adam Gruber">
+
+<title>Analyse exploratoire des données</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="TP1_Etudiants_files/libs/clipboard/clipboard.min.js"></script>
+<script src="TP1_Etudiants_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="TP1_Etudiants_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="TP1_Etudiants_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="TP1_Etudiants_files/libs/quarto-html/popper.min.js"></script>
+<script src="TP1_Etudiants_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="TP1_Etudiants_files/libs/quarto-html/anchor.min.js"></script>
+<link href="TP1_Etudiants_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="TP1_Etudiants_files/libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="TP1_Etudiants_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="TP1_Etudiants_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="TP1_Etudiants_files/libs/bootstrap/bootstrap-736f0910cb756d7012ff2b8ecea39770.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="TP1_Etudiants_files/libs/quarto-contrib/foldbox/foldbox.css" rel="stylesheet">
+<script src="TP1_Etudiants_files/libs/quarto-contrib/remember-1.0.0/remember.js"></script>
+<link href="TP1_Etudiants_files/libs/quarto-contrib/remember-1.0.0/remember.css" rel="stylesheet">
+<style>
+.DONE {
+  --color1: #cce7b1;
+  --color2: #86b754;
+}
+.Conjecture {
+  --color1: #948bde;
+  --color2: #584eab;
+}
+.Feature {
+  --color1: #c0c0c0;
+  --color2: #808080;
+}
+.Definition {
+  --color1: #d999d3;
+  --color2: #a01793;
+}
+.Corollary {
+  --color1: #948bde;
+  --color2: #584eab;
+}
+.TODO {
+  --color1: #e7b1b4;
+  --color2: #8c3236;
+}
+.Theorem {
+  --color1: #948bde;
+  --color2: #584eab;
+}
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table des matières</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#exercice-1" id="toc-exercice-1" class="nav-link" data-scroll-target="#exercice-1">Exercice 1</a></li>
+  <li><a href="#exercice-2" id="toc-exercice-2" class="nav-link" data-scroll-target="#exercice-2">Exercice 2</a></li>
+  <li><a href="#exercice-3" id="toc-exercice-3" class="nav-link" data-scroll-target="#exercice-3">Exercice 3</a></li>
+  <li><a href="#exercice-4" id="toc-exercice-4" class="nav-link" data-scroll-target="#exercice-4">Exercice 4</a></li>
+  <li><a href="#exercice-5" id="toc-exercice-5" class="nav-link" data-scroll-target="#exercice-5">Exercice 5</a></li>
+  <li><a href="#exercice-6" id="toc-exercice-6" class="nav-link" data-scroll-target="#exercice-6">Exercice 6</a></li>
+  <li><a href="#exercice-7" id="toc-exercice-7" class="nav-link" data-scroll-target="#exercice-7">Exercice 7</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analyse exploratoire des données</h1>
+<p class="subtitle lead">De la théorie à la pratique (TP 1)</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Auteur·rice</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Adam Gruber <a href="mailto:adam.gruber@heig-vd.ch" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Département TIC
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+    <div>
+    <div class="quarto-title-meta-heading">Date de publication</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">This version: novembre 27, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Donc voilà les objectifs de ce projet …</p>
+<p>Il faut pas oublier de bien définir les objectifs ici.</p>
+<p>Et a la fin d’ajouter une conclusion et les références utilisées.</p>
+<p>Présentation des données pour chaque exercices</p>
+</section>
+<section id="exercice-1" class="level1">
+<h1>Exercice 1</h1>
+<p>L’une des forces de <strong><em>R</em></strong> est qu’il est capable de traiter de grands jeux de données de manière très rapide. Cet avantage a évidemment son prix : la lecture des données peut paraître ennuyeuse, particulièrement lorsqu’elles se trouvent sur support informatique. Il existe cependant plusieurs possibilités pour lire dans <strong><em>R</em></strong> des données contenues dans un fichier. Si elles se présentent sous la forme d’une liste de valeurs telles que chacune d’elles figure sur une ligne ou si elles sont séparées par un espace, on peut utiliser la commande <code>scan()</code> qui renvoie un vecteur. Lorsque les données se présentent sous la forme d’une table, i.e.&nbsp;une ligne par observation et une colonne par variable, l’instruction à utiliser est <code>read.table()</code> si les données se trouvent dans un fichier texte (ASCII). Des variantes de cette fonction existent comme par exemple <code>read.csv2()</code> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Dans cet exercice, nous allons enregistrer dans <strong><em>R</em></strong> les données qui seront utilisées dans le travail pratique. Vous pouvez organiser comme vous le souhaitez votre travail. Néanmoins, nous vous suggérons de créer deux répertoires : l’un contenant les données et l’autre votre travail (script, rapport, résultats). Pour être plus structuré, vous pouvez même ajouter un sous-répertoire à votre répertoire de travail pour y stocker vos graphiques; vous pouvez également créer un projet pour mieux gérer votre travail pratique.</p>
+<p><strong>a.</strong> Les données que nous allons traiter dans ce travail pratique se trouvent dans la page <a href="https://cyberlearn.hes-so.ch/course/view.php?id=36642" title="Moodle">Moodle du cours</a>. Copiez-les dans votre répertoire de données.</p>
+<p><strong>b.</strong> Charger les données dans <strong><em>R</em></strong> en utilisant les fonctions <code>scan()</code> et <code>read.table()</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>dataDir<span class="ot">&lt;-</span><span class="st">"./data"</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>data_files<span class="ot">&lt;-</span><span class="fu">list.files</span>(<span class="at">path=</span>dataDir, <span class="at">pattern =</span> <span class="st">".txt"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">print</span>(data_files)</span>
+<span id="cb1-4"><a href="#cb1-4"></a>cpus<span class="ot">&lt;-</span><span class="fu">scan</span>(<span class="fu">file.path</span>(dataDir, <span class="st">"cpus.txt"</span>))</span>
+<span id="cb1-5"><a href="#cb1-5"></a>examen<span class="ot">&lt;-</span><span class="fu">read.table</span>(<span class="fu">file.path</span>(dataDir, <span class="st">"examen.txt"</span>), <span class="at">header=</span>T)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Les utilisateurs se chargeront d’adapter les chemins à leur répertoire de travail et à leur système d’exploitation. Les fichiers <code>cpus.txt</code> et <code>examen.txt</code> sont ainsi accessibles dans <strong><em>R</em></strong> sous les noms <code>cpus</code> et <code>examen</code> respectivement.</p>
+<p><strong>c.</strong> Pour voir le contenu de l’objet <code>cpus</code>, taper l’instruction</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>cpus</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  76  18  22 144  12 185  38  24  45  38  65 141  44  58  12 510 370  66 915
+[20]  25  30  66  36  14  26  92   7  36 133  66  24  10  36 100  60  33  40  19
+[39]  16 130  62  21  32  64  24 110  11  56  46 136</code></pre>
+</div>
+</div>
+<p>Il en est de même pour <code>examen</code>. Les objets <code>cpus</code> et <code>examen</code> sont de nature toute différente. En effet, le premier est un <em>vecteur</em>, le second un tableau de données, <em>data.frame</em><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> en anglais.</p>
+<p><strong>d.</strong> Pour accéder à la 17ème composante du vecteur <code>cpus</code>, utiliser la commande</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>cpus[<span class="dv">17</span>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 370</code></pre>
+</div>
+</div>
+<p><strong>e.</strong> Pour obtenir une partie du vecteur <code>cpus</code> comme par exemple les éléments du vecteur compris entre la 5ème et la 21ème composante, taper l’instruction</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>cpus[<span class="dv">5</span><span class="sc">:</span><span class="dv">21</span>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  12 185  38  24  45  38  65 141  44  58  12 510 370  66 915  25  30</code></pre>
+</div>
+</div>
+<p><strong>f.</strong> Pour extraire du vecteur <code>cpus</code> ses éléments supérieurs à <span class="math inline">\(250\)</span>, utiliser la commande</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>cpus[cpus<span class="sc">&gt;</span><span class="dv">250</span>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 510 370 915</code></pre>
+</div>
+</div>
+<p><strong>g.</strong> Il est possible d’accéder directement aux composantes d’une table par le nom. Par exemple, si on veut afficher la composante <code>note</code> de l’objet <code>examen</code>, on peut utiliser la commande</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>examen<span class="sc">$</span>note</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 5.7 4.1 5.9 3.6 3.0 3.8 3.1  NA 5.3 3.0 3.7 4.7 4.0 4.6 4.1 4.2 3.2 3.1 4.7
+[20] 4.9 3.7 3.6 4.1  NA 4.3 4.3  NA 3.3 3.6 3.4  NA 1.3 3.3 1.3 3.4 3.8 4.1 4.6
+[39]  NA 4.0  NA 2.3 3.5 4.0 3.2 3.4  NA 4.0 1.8 4.5 2.9 4.4  NA</code></pre>
+</div>
+</div>
+<p><strong>h.</strong> On peut aussi accéder en profondeur aux composantes comme par exemple par la commande</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>examen<span class="sc">$</span>note[<span class="dv">10</span>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+</div>
+<p><strong>i.</strong> La méthode la plus simple pour créer un vecteur consiste à énumérer ses éléments à l’aide de la fonction <code>c()</code> :</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>mesdonnees<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">2.9</span>, <span class="fl">3.4</span>, <span class="fl">3.4</span>, <span class="fl">3.7</span>, <span class="fl">3.7</span>, <span class="fl">2.8</span>, <span class="fl">2.1</span>, <span class="fl">2.5</span>, <span class="fl">2.6</span>, <span class="fl">1.5</span>)</span>
+<span id="cb14-2"><a href="#cb14-2"></a>mesdonnees</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 2.9 3.4 3.4 3.7 3.7 2.8 2.1 2.5 2.6 1.5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>couleurs<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"bleu"</span>, <span class="st">"vert"</span>, <span class="st">"blanc"</span>, <span class="st">"jaune"</span>, <span class="st">"noir"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2"></a>couleurs</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "bleu"  "vert"  "blanc" "jaune" "noir" </code></pre>
+</div>
+</div>
+<p><strong>j.</strong> On peut ôter des composantes d’un vecteur en indiquant entre crochets les indices précédés du signe négatif comme par exemple</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>mesdonnees[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">6</span><span class="sc">:</span><span class="dv">9</span>)]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.9 3.4 3.4 3.7 3.7 1.5</code></pre>
+</div>
+</div>
+<p><strong>k.</strong> Finalement, le contenu de votre environnement de travail est affiché à l’aide de la fonction <code>ls().</code></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "couleurs"   "cpus"       "data_files" "dataDir"    "examen"    
+[6] "mesdonnees"</code></pre>
+</div>
+</div>
+</section>
+<section id="exercice-2" class="level1">
+<h1>Exercice 2</h1>
+<p>La performance relative au processeur <em>IBM 370/158-3</em> de <span class="math inline">\(50\)</span> processeurs d’ordinateurs a été relevée.</p>
+<p><br></p>
+<span class="math display">\[\begin{array}{cccccccccc}
+76  &amp; 18   &amp; 22  &amp; 144  &amp; 12  &amp; 185   &amp; 38   &amp; 24   &amp; 45   &amp; 38   \\[1mm]
+65  &amp; 141  &amp; 44  &amp; 58   &amp; 12  &amp; 510   &amp; 370  &amp; 66   &amp; 915  &amp; 25   \\[1mm]  
+30  &amp; 66   &amp; 36  &amp; 14   &amp; 26  &amp; 92    &amp; 7    &amp; 36   &amp; 133  &amp; 66   \\[1mm]  
+24  &amp; 10   &amp; 36  &amp; 100  &amp; 60  &amp; 33    &amp; 40   &amp; 19   &amp; 16   &amp; 130  \\[1mm]  
+62  &amp; 21   &amp; 32  &amp; 64   &amp; 24  &amp; 110   &amp; 11   &amp; 56   &amp; 46   &amp; 136  \\[1mm]  
+\end{array}\]</span>
+<p><br></p>
+<p>L’objet <code>cpus</code> contient les valeurs observées.</p>
+<p><strong>a.</strong> Constuire un diagramme branche-et-feuilles, une boîte à moustaches et un histogramme des données observées à l’aide des commandes ci-dessous.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-11"><pre class="sourceCode numberSource r code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode r"><a class="code-annotation-anchor" data-target-cell="annotated-cell-11" data-target-annotation="1" onclick="event.preventDefault();" href="">1</a><span id="annotated-cell-11-1" class="code-annotation-target"><a href="#annotated-cell-11-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">pty=</span><span class="st">"s"</span>)</span>
+<span id="annotated-cell-11-2"><a href="#annotated-cell-11-2"></a><span class="fu">boxplot</span>(cpus, <span class="at">xlab=</span><span class="st">"performance relative"</span>, <span class="at">col=</span><span class="st">"lightskyblue3"</span>, <span class="at">horizontal=</span>T) </span>
+<span id="annotated-cell-11-3"><a href="#annotated-cell-11-3"></a><span class="fu">rug</span>(cpus)</span>
+<span id="annotated-cell-11-4"><a href="#annotated-cell-11-4"></a><span class="fu">hist</span>(cpus, <span class="at">xlab=</span><span class="st">"performance relative"</span>, <span class="at">ylab=</span><span class="st">"fréquence"</span>, <span class="at">main=</span><span class="st">""</span>, </span>
+<span id="annotated-cell-11-5"><a href="#annotated-cell-11-5"></a>     <span class="at">col=</span><span class="st">"lightskyblue3"</span>) </span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-11" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-11" data-code-lines="1" data-code-annotation="1">Quels sont les effets de cette commande ?</span>
+</dd>
+</dl>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TP1_Etudiants_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>La commande créer 2 types de graphiques, une boîte à moustache et une histogramme.</p>
+<p>Les 2 graphiques montrent les données observées dans cpus.</p>
+<ol start="2" type="1">
+<li>Quel est l’effet de la fonction <code>rug()</code> ?</li>
+</ol>
+<p>Observer les résultats obtenus par chaque commande.</p>
+<p><strong>b.</strong> Commenter la distribution des valeurs observées en se basant sur les graphiques de la Figure : valeur(s) atypique(s), asymétrie.</p>
+<p><strong>c.</strong> Calculer la performance relative médiane et la performance relative moyenne des valeurs observées en utilisant les fonctions de <strong><em>R</em></strong> adéquates.</p>
+<p>Est-il plus approprié d’utiliser la médiane ou la moyenne ?</p>
+<p><strong>d.</strong> Déterminer le(s) mode(s) des valeurs observées en complétant les commandes ci-dessous :</p>
+<p><strong>e.</strong> Que fait la commande suivante ?</p>
+<p><strong>f.</strong> Décrire l’effet sur la moyenne et sur la médiane des trois interventions suivantes :</p>
+<ol type="1">
+<li><p>ajouter un processeur de performance relative <span class="math inline">\(41\)</span>;</p></li>
+<li><p>soustraire <span class="math inline">\(7\)</span> à chaque valeur observée;</p></li>
+<li><p>diviser chaque observation par <span class="math inline">\(3\)</span>.</p></li>
+</ol>
+<p><strong>g.</strong> Calculer l’écart-type des performances relatives une fois avec les valeurs atypiques et une fois sans en utilisant la fonction <code>sd()</code>. Les valeurs atypiques peuvent être déterminées à l’aide de la fonction <code>boxplot()</code> avec <code>plot=FALSE</code> comme argument.</p>
+<p>Que constate-t-on ? L’écart-type est-il un indicateur robuste ?</p>
+</section>
+<section id="exercice-3" class="level1">
+<h1>Exercice 3</h1>
+<p>Les étudiants suivant un cours de Mathématiques dans une école d’ingénierie ont passé l’examen de fin d’unité. Le cours était donné à <span class="math inline">\(53\)</span> étudiants répartis en deux groupes notés <em>A</em> et <em>C</em>. Les résultats obtenus figurent dans la table ci-dessous et sont contenus dans l’objet <code>examen</code>.</p>
+<div class="cell" data-tbl-cap="Notes obtenues par les étudiants à l'examen de fin d'unité du cours de Mathématiques.">
+<div class="cell-output-display">
+<div id="zfowacyzfc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+#zfowacyzfc table {
+  font-family: 'Noto Sans', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#zfowacyzfc thead, #zfowacyzfc tbody, #zfowacyzfc tfoot, #zfowacyzfc tr, #zfowacyzfc td, #zfowacyzfc th {
+  border-style: none;
+}
+
+#zfowacyzfc p {
+  margin: 0;
+  padding: 0;
+}
+
+#zfowacyzfc .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #F6F6F6;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #40C5FF;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 3px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#zfowacyzfc .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #F6F6F6;
+  border-bottom-width: 0;
+}
+
+#zfowacyzfc .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #F6F6F6;
+  border-top-width: 0;
+}
+
+#zfowacyzfc .gt_heading {
+  background-color: #F6F6F6;
+  text-align: left;
+  border-bottom-color: #F6F6F6;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 0px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #40C5FF;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #ECECEC;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_col_heading {
+  color: #333333;
+  background-color: #F6F6F6;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#zfowacyzfc .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #F6F6F6;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#zfowacyzfc .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#zfowacyzfc .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#zfowacyzfc .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #ECECEC;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#zfowacyzfc .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#zfowacyzfc .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #F6F6F6;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #BEBEBE;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #BEBEBE;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#zfowacyzfc .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #F6F6F6;
+  font-size: 100%;
+  font-weight: bold;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #BEBEBE;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #BEBEBE;
+  vertical-align: middle;
+}
+
+#zfowacyzfc .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#zfowacyzfc .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#zfowacyzfc .gt_row {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: white;
+  border-top-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#zfowacyzfc .gt_stub {
+  color: #333333;
+  background-color: #F6F6F6;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zfowacyzfc .gt_stub_row_group {
+  color: #333333;
+  background-color: #F6F6F6;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#zfowacyzfc .gt_row_group_first td {
+  border-top-width: 1px;
+}
+
+#zfowacyzfc .gt_row_group_first th {
+  border-top-width: 1px;
+}
+
+#zfowacyzfc .gt_summary_row {
+  color: #333333;
+  background-color: #F6F6F6;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zfowacyzfc .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#zfowacyzfc .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_grand_summary_row {
+  color: #333333;
+  background-color: #F6F6F6;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zfowacyzfc .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_striped {
+  background-color: #ECECEC;
+}
+
+#zfowacyzfc .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 3px;
+  border-bottom-color: #FFFFFF;
+}
+
+#zfowacyzfc .gt_footnotes {
+  color: #333333;
+  background-color: #F6F6F6;
+  border-bottom-style: none;
+  border-bottom-width: 0px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zfowacyzfc .gt_sourcenotes {
+  color: #333333;
+  background-color: #F6F6F6;
+  border-bottom-style: none;
+  border-bottom-width: 0px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zfowacyzfc .gt_sourcenote {
+  font-size: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zfowacyzfc .gt_left {
+  text-align: left;
+}
+
+#zfowacyzfc .gt_center {
+  text-align: center;
+}
+
+#zfowacyzfc .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#zfowacyzfc .gt_font_normal {
+  font-weight: normal;
+}
+
+#zfowacyzfc .gt_font_bold {
+  font-weight: bold;
+}
+
+#zfowacyzfc .gt_font_italic {
+  font-style: italic;
+}
+
+#zfowacyzfc .gt_super {
+  font-size: 65%;
+}
+
+#zfowacyzfc .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#zfowacyzfc .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#zfowacyzfc .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#zfowacyzfc .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#zfowacyzfc .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#zfowacyzfc .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#zfowacyzfc .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#zfowacyzfc .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#zfowacyzfc div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<caption>Notes obtenues par les étudiants à l’examen de fin d’unité du cours de Mathématiques.</caption>
+<thead>
+<tr class="gt_heading header">
+<td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="color: #005689; font-size: 22px; font-weight: 700">Table des notes selon les groupes</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="groupe" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">groupe</th>
+<th id="mode_de_formation" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">mode_de_formation</th>
+<th id="somme" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">somme</th>
+<th id="note" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">note</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe" style="border-top-width: 0px; border-top-style: solid; border-top-color: white">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation" style="border-top-width: 0px; border-top-style: solid; border-top-color: white">EE</td>
+<td class="gt_row gt_right" headers="somme" style="border-top-width: 0px; border-top-style: solid; border-top-color: white">47.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #F14700; color: #FFFFFF; border-top-width: 0px; border-top-style: solid; border-top-color: white">5.7</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">30.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E7BF1C; color: #000000">4.1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">49.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #F21A00; color: #FFFFFF">5.9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">PT</td>
+<td class="gt_row gt_right gt_striped" headers="somme">26.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #EBCC2A; color: #000000">3.6</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">19.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #BDC185; color: #000000">3.0</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">28.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E9C725; color: #000000">3.8</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">21.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #C6C279; color: #000000">3.1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">PT</td>
+<td class="gt_row gt_right gt_striped" headers="somme">NA</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #808080; color: #FFFFFF">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">42.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #ED7A00; color: #FFFFFF">5.3</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right gt_striped" headers="somme">19.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #BDC185; color: #000000">3.0</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">26.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #EAC927; color: #000000">3.7</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right gt_striped" headers="somme">37.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E1B003; color: #000000">4.7</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">29.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #E8C21F; color: #000000">4.0</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">35.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E2B308; color: #000000">4.6</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">PT</td>
+<td class="gt_row gt_right" headers="somme">30.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #E7BF1C; color: #000000">4.1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">32.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E6BD19; color: #000000">4.2</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">21.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #CEC46C; color: #000000">3.2</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">21.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #C6C279; color: #000000">3.1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">PT</td>
+<td class="gt_row gt_right" headers="somme">36.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #E1B003; color: #000000">4.7</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">38.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E5A100; color: #000000">4.9</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">27.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #EAC927; color: #000000">3.7</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right gt_striped" headers="somme">26.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #EBCC2A; color: #000000">3.6</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">31.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #E7BF1C; color: #000000">4.1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right gt_striped" headers="somme">NA</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #808080; color: #FFFFFF">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">32.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #E5BA15; color: #000000">4.3</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">PT</td>
+<td class="gt_row gt_right gt_striped" headers="somme">32.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E5BA15; color: #000000">4.3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">A</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">NA</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #808080; color: #FFFFFF">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">A</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">22.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #D6C65F; color: #000000">3.3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">25.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #EBCC2A; color: #000000">3.6</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">23.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #DDC850; color: #000000">3.4</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">NA</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #808080; color: #FFFFFF">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">2.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #3B9AB2; color: #FFFFFF">1.3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">23.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #D6C65F; color: #000000">3.3</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">3.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #3B9AB2; color: #FFFFFF">1.3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">24.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #DDC850; color: #000000">3.4</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">27.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E9C725; color: #000000">3.8</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">31.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #E7BF1C; color: #000000">4.1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">36.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E2B308; color: #000000">4.6</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">NA</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #808080; color: #FFFFFF">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right gt_striped" headers="somme">29.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E8C21F; color: #000000">4.0</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">NA</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #808080; color: #FFFFFF">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">13.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #71B3C3; color: #000000">2.3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">24.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #E4CA3F; color: #000000">3.5</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right gt_striped" headers="somme">30.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E8C21F; color: #000000">4.0</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">21.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #CEC46C; color: #000000">3.2</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">23.5</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #DDC850; color: #000000">3.4</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">NA</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #808080; color: #FFFFFF">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right gt_striped" headers="somme">30.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E8C21F; color: #000000">4.0</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">8.0</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #58A7BA; color: #FFFFFF">1.8</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right gt_striped" headers="somme">35.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E3B50D; color: #000000">4.5</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">TP</td>
+<td class="gt_row gt_right" headers="somme">18.5</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #B3BF91; color: #000000">2.9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="groupe">C</td>
+<td class="gt_row gt_left gt_striped" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right gt_striped" headers="somme">34.0</td>
+<td class="gt_row gt_right gt_striped" headers="note" style="background-color: #E4B812; color: #000000">4.4</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="groupe">C</td>
+<td class="gt_row gt_left" headers="mode_de_formation">EE</td>
+<td class="gt_row gt_right" headers="somme">NA</td>
+<td class="gt_row gt_right" headers="note" style="background-color: #808080; color: #FFFFFF">NA</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>On se demande si une différence significative existe entre les deux groupes à l’examen.</p>
+<p><strong>a.</strong> Tracer les boîtes à moustaches en parallèle en utilisant les commandes suivantes :</p>
+<p><strong>b.</strong> Rajouter les bâtonnets des notes des étudiants des deux classes, sur le côté gauche des boîtes à moustaches pour la classe <span class="math inline">\(A\)</span> (<code>side=2</code> comme argument de la fonction <code>rug()</code>) et sur le côté droite pour la classe <span class="math inline">\(C\)</span> (<code>side=4</code> comme argument de la fonction <code>rug()</code>).</p>
+<p><em>Indication :</em> pour séparer puis enregistrer les notes des étudiants selon les groupes, on peut utiliser les commandes</p>
+<p><strong>c.</strong> En se basant sur la Figure, existe-t-il une différence significative entre les deux groupes à l’examen de fin d’unité ?</p>
+<p><strong>d.</strong> Observe-t-on sur les boîtes à moustaches une différence entre les dispersions des deux groupes ?</p>
+<p><strong>e.</strong> Calculer les écarts-types des deux groupes à l’aide des fonctions <code>by()</code> et <code>sd()</code>.</p>
+<p>En se basant sur les écarts-types, existe-t-il une différence en dispersion entre les deux groupes à l’examen de fin d’unité ?</p>
+<p><strong>f.</strong> Que peut-on déduire en comparant les conclusions établies en <strong>c.</strong>, <strong>d.</strong> et <strong>e.</strong> ?</p>
+<p><strong>g.</strong> Un autre graphique pour étudier les éventuelles différences entre les deux groupes à l’examen de fin d’unité se trouve dans la Figure.</p>
+<p>À votre avis, entre les boîtes à moustaches en parallèle et le graphique tracé ci-dessus, lequel est le plus approprié ?</p>
+</section>
+<section id="exercice-4" class="level1">
+<h1>Exercice 4</h1>
+<p>Une partie de la base de données du recensement américain<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> de <span class="math inline">\(1994\)</span> a été extraite. Elle concerne <span class="math inline">\(48'842\)</span> personnes adultes dont on s’intéresse notamment à l’influence que peut avoir le type de scolarité, formation acquise par l’individu, sur le nombre d’heures de travail par semaine. Par simplicité et pour préserver l’authenticité du système éducatif américain, le nom des variables n’est pas traduit en français.</p>
+<p><strong>a.</strong> Nous nous proposons de tracer les boîtes à moustaches en parallèle du temps consacré au travail par les individus recensés. Pour y parvenir, nous utilisons la librairie <code>ggplot2</code><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> qu’il faut d’abord installer puis activer dans votre session.</p>
+<p>La librairie <code>ggplot2</code> explicite les liens conceptuels entre graphiques et analyses statistiques. Sa syntaxe est particulière mais ingénieuse. Elle se base sur un ensemble de composants indépendants qui peuvent être combinés de différentes manières<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
+<p>Les données du recensement se trouvent dans la librairie <code>arules</code> de <strong><em>R</em></strong> qui doit être installée puis activée.</p>
+<p>Les observations sont lues dans le logiciel à l’aide de la commande</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="fu">library</span>(arules)</span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="fu">data</span>(<span class="st">"AdultUCI"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>et les variables qui nous intéressent sont sélectionnées et stockées dans l’objet <code>dframe</code> par les commandes</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-14"><pre class="sourceCode numberSource r code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-14-1"><a href="#annotated-cell-14-1"></a>dframe<span class="ot">&lt;-</span>AdultUCI[, <span class="fu">c</span>(<span class="st">"education"</span>, <span class="st">"hours-per-week"</span>)]</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="1" onclick="event.preventDefault();" href="">1</a><span id="annotated-cell-14-2" class="code-annotation-target"><a href="#annotated-cell-14-2"></a><span class="fu">colnames</span>(dframe)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"education"</span>, <span class="st">"hours_per_week"</span>)</span>
+<span id="annotated-cell-14-3"><a href="#annotated-cell-14-3"></a><span class="fu">str</span>(dframe)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-14" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="2" data-code-annotation="1">Pourquoi ce changement de nom de variable ?</span>
+</dd>
+</dl>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   48842 obs. of  2 variables:
+ $ education     : Ord.factor w/ 16 levels "Preschool"&lt;"1st-4th"&lt;..: 14 14 9 7 14 15 5 9 15 14 ...
+ $ hours_per_week: int  40 13 40 40 40 40 16 45 50 40 ...</code></pre>
+</div>
+</div>
+<p>Tracer les boîtes à moustaches en parallèle de la Figure dans lesquelles est représenté le temps hebdomadaire consacré au travail par les Américains recensés selon leur formation.</p>
+<p>Peut-on distinguer deux groupes de types de formation dans ce graphique ? Dans l’affirmative, énumérez-les. Dans la négative, expliquez pourquoi on ne parvient pas à séparer les types de formation en deux groupes.</p>
+<p><strong>b.</strong> Calculer la proportion d’observations contenant des valeurs manquantes en utilisant les commandes ci-dessous.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">dim</span>(AdultUCI)</span>
+<span id="cb24-2"><a href="#cb24-2"></a>nrows<span class="ot">&lt;-</span><span class="fu">nrow</span>(AdultUCI)</span>
+<span id="cb24-3"><a href="#cb24-3"></a>n.missing<span class="ot">&lt;-</span><span class="fu">rowSums</span>(<span class="fu">is.na</span>(AdultUCI))</span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="fu">sum</span>(n.missing<span class="sc">&gt;</span><span class="dv">0</span>)<span class="sc">/</span>nrows</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>c.</strong> En se basant sur les boîtes à moustaches en parallèle de la Figure, pour quel type de formation observe-t-on la plus petite dispersion du temps de travail ? Existe-t-il une différence entre les médianes des types de formation ? En donner brièvement la raison.</p>
+<p><strong>d.</strong> Pour chaque type de formation, on peut déterminer puis afficher à l’écran le temps maximal de travail hebdomadaire. Compléter les commandes ci-dessous pour y parvenir.</p>
+<p>La formation pour laquelle un temps maximal minimal a été observé se détermine par les commandes</p>
+<p>Est-ce surprenant ?</p>
+<p><strong>e.</strong> En s’inspirant des commandes utilisées ci-dessus, déterminer la formation pour laquelle la distribution des temps de travail se caractérise par le plus grand écart-type.</p>
+<p><strong>f.</strong> Observe-t-on un résultat similaire en utilisant l’étendue interquartiles à l’aide de la fonction <code>IQR()</code>?</p>
+<div id="fig-ggplot2" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="h">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ggplot2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ggplot2_exploratory.png" class="img-fluid figure-img" style="width:80.0%" data-fig-pos="h">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ggplot2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Les délices de la librairie <code>ggplot2</code>
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="exercice-5" class="level1">
+<h1>Exercice 5</h1>
+<p>Estimer et justifier les valeurs des coefficients de corrélation des séries de données à l’aide de leurs graphiques de nuage de points tracés dans la <a href="#fig-scatterplot1" class="quarto-xref">Figure&nbsp;2</a>, la <a href="#fig-scatterplot2" class="quarto-xref">Figure&nbsp;3</a>, la <a href="#fig-scatterplot3" class="quarto-xref">Figure&nbsp;4</a> et la <a href="#fig-scatterplot4" class="quarto-xref">Figure&nbsp;5</a>.</p>
+<div id="fig-scatterplot1" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scatterplot1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="scatterplot_5.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scatterplot1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Graphiques de nuage de points I.
+</figcaption>
+</figure>
+</div>
+<div id="fig-scatterplot2" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scatterplot2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="scatterplot_6.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scatterplot2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Graphiques de nuage de points II.
+</figcaption>
+</figure>
+</div>
+<div id="fig-scatterplot3" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scatterplot3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="scatterplot_7.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scatterplot3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Graphiques de nuage de points III.
+</figcaption>
+</figure>
+</div>
+<div id="fig-scatterplot4" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scatterplot4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="scatterplot_8.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scatterplot4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Graphiques de nuage de points IV.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="exercice-6" class="level1">
+<h1>Exercice 6</h1>
+<p>Une étude a été réalisée en botanique sur <span class="math inline">\(150\)</span> iris. Cinq variables ont été relevées : la longueur (<code>Sepal.Length</code>) et la largeur (<code>Sepal.Width</code>) des sépales, la longueur (<code>Petal.Length</code>) et la largeur (<code>Petal.Width</code>) des pétales, l’unité utilisée étant le centimètre, ainsi que l’espèce (<code>Species</code>) de la fleur (Setosa, Versicolor et Virginica).</p>
+<div id="fig-iris-species" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="h">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-iris-species-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="iris.png" class="img-fluid figure-img" style="width:50.0%" data-fig-pos="h">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-iris-species-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Les trois espèces d’iris.
+</figcaption>
+</figure>
+</div>
+<p>Ces données, qui avaient été récoltées par Edgar Anderson, se trouvent déjà dans <strong><em>R</em></strong>. Pour les utiliser dans votre session actuelle, il suffit de taper dans la console le nom de l’objet, <code>iris</code>, qui les contient.</p>
+<p><strong>a.</strong> Utiliser les librairies <code>skimr</code> et <code>summarytools</code> pour afficher les sorties qui permettent d’effectuer une analyse exploratoire des données observées. Pour la librairie <code>skimr</code> appliquer la fonction <code>skim()</code> à l’objet <code>iris</code>; appliquer la fonction <code>dfSummary()</code> à l’objet <code>iris</code> pour la librairie <code>summarytools</code>.</p>
+<p><strong>b.</strong> La distribution de la largeur du sépale (<code>Sepal.Width</code>) est-elle plutôt symétrique ?</p>
+<p><strong>c.</strong> La distribution de la longeur du pétale (<code>Petal.Length</code>) est-elle unimodale ou bimodale ?</p>
+<p><strong>d.</strong> Tracer le nuage de points de la largeur (<code>Petal.Width</code>) versus la longueur (<code>Petal.Length</code>) des pétales des iris en utilisant les librairies <code>ggplot2</code> et <code>ggforce</code> et en complétant les commandes ci-dessous.</p>
+<p><strong>e.</strong> En se basant sur le graphique de nuage de points, existe-t-il une relation entre la largeur et la longueur des pétales des iris ? Dans l’affirmative, de quelle nature est-elle ?</p>
+<p><strong>f.</strong> Remarque-t-on des observations inhabituelles dans le graphique de nuage de points ?</p>
+<p><strong>g.</strong> Déterminer la corrélation entre la largeur et la longueur des pétales des iris en utilisant la fonction <code>cor()</code>.</p>
+<p><strong>h.</strong> Quelle valeur attribueriez-vous à la longueur des pétales des iris pour distinguer les iris Setosa des deux autres espèces ?</p>
+<p><strong>i.</strong> Des animations peuvent être créées dans <strong><em>R</em></strong> en utilisant la librairie <code>gganimate</code>. Un exemple peut être conçu en utilisant le code ci-dessous.</p>
+<p><strong>j.</strong> Installer la librairie <code>reticulate</code> qui permet de faire du <em>Python</em> à partir de <strong><em>RStudio IDE</em></strong>. Fixer ensuite l’interpréteur Python dans la rubrique <em>Python</em> de la boîte de dialogue <em>Options</em>. Cette boîte de dialogue s’affiche à l’écran en utilisant le menu <em>Tools</em> puis <em>Global Options…</em> de <strong><em>RStudio IDE</em></strong>. Si nécessaire, il faut créer un environnement <em>Python</em> et y installer les librairies.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Python_interpreter.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>L’interpréteur Python de <strong><em>RStudio IDE</em></strong>.</figcaption>
+</figure>
+</div>
+<p><br></p>
+<p>La lecture de l’objet <code>iris</code> de <strong><em>R</em></strong> en Python s’effectue en utilisant la commande</p>
+<p>Reconstituer le graphique ci-dessous en utilisant en particulier les librairies <code>pandas</code>, <code>numpy</code> et le module <code>matplotlib.pyplot</code> de la bibliothèque <code>matplotlib</code> de Python.</p>
+</section>
+<section id="exercice-7" class="level1">
+<h1>Exercice 7</h1>
+<p>Pour étudier le cancer de la peau (mélanome maligne), des données avaient été relevées auprès d’hommes de population blanche vivant dans les états américains entre <span class="math inline">\(1950\)</span> et <span class="math inline">\(1969\)</span>. On se demandait si des relations pouvaient exister entre plusieurs variables statistiques telles que les données géographiques (longitude et latitude du centre de chaque état), l’océan (états côtiers ou états intérieurs) et le nombre de décès dus au cancer de la peau; la dernière variable, variable observée dans chaque état américain, est considérée comme variable réponse.</p>
+<p>Les données se trouvent dans la librairie <code>HSAUR3</code> de <strong><em>R</em></strong> qui doit être installée puis activée.</p>
+<p><strong>a.</strong> Reconstituer en utilisant les librairies <code>ggplot2</code> et <code>ggrepel</code> de <strong><em>R</em></strong> le graphique de nuage de points ci-dessous entre le nombre de décès dus au cancer de la peau et la latitude. Associée aux points, on a ajouté une couleur différente pour les états côtiers et pour les états intérieurs et une légende indique de quel état il s’agit.</p>
+<p><strong>b.</strong> En se basant sur le graphique, existe-t-il une relation entre le nombre de décès dus au cancer de la peau et la latitude ?</p>
+<p><strong>c.</strong> A-t-on plus de décès dus au cancer de la peau dans les états côtiers ou dans les états intérieurs ?</p>
+<p><strong>d.</strong> Tracer le graphique interactif ci-dessous en utilisant la librairie <code>altair</code> de <em>Python</em>.</p>
+<div id="Conjecture*-8.1" class="Conjecture unnumbered" data-label="Le rapport doit">
+<details class="Conjecture fbx-simplebox fbx-default"><summary><strong>Le rapport doit</strong></summary><div>
+<ul>
+<li><p>être rédigé avec soin en utilisant <strong><em>quarto®</em></strong>;</p></li>
+<li><p>contenir une introduction dans laquelle se trouve les objectifs de l’analyse de données ainsi qu’une conclusion pour synthétiser le travail pratique;</p></li>
+<li><p>contenir les réponses aux questions posées;</p></li>
+<li><p>contenir les commandes de <strong><em>R</em></strong> utilisées, les résultats et graphiques obtenus;</p></li>
+<li><p>être rendu sur la page Moodle du cours en format .html ou .pdf avant la date butoir.</p></li>
+</ul>
+</div></details>
+</div>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Notes de bas de page</h2>
+
+<ol>
+<li id="fn1"><p>Pour de plus amples informations, voir “<strong><em>R</em></strong> pour les débutants”, E. Paradis, 2005, pages 12–16.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Pour de plus amples informations, voir “<strong><em>R</em></strong> pour les débutants”, E. Paradis, 2005, pages 12.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Par intérêt, un coup d’oeil à l’adresse du <a href="https://www.census.gov/" title="United States Census Bureau">Gouvernement Américain</a>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Une librairie correspondante, <a href="https://realpython.com/ggplot-python/" title="plotnine">plotnine</a>, a été mise à disposition des utilisateurs de <em>Python</em>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>De plus amples informations se trouvent dans <a href="https://ggplot2.tidyverse.org/" title="tidyverse">Tidyverse</a>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copié");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copié");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

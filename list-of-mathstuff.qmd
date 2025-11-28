@@ -1,0 +1,2 @@
+\providecommand{\Pageref}[1]{\hfill p.\pageref{#1}}
+ [**Le rapport doit**](#Conjecture*-8.1)\Pageref{Conjecture*-8.1}
