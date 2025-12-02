@@ -220,21 +220,50 @@ par(mfrow=c(1,1))
 
 1.  Quels sont les effets de cette commande ?
 
-La fonction par() permet de définir des paramètres liés au graphiques
-
-Le paramètre mfrow() permet de diviser la zone de graphique en 1 ligne et 2 colonnes, et pty indique que la forme des graphiques seront des carrés.
+> La fonction par() permet de définir des paramètres liés au graphiques
+>
+> Le paramètre mfrow() permet de diviser la zone de graphique en 1 ligne et 2 colonnes, et pty indique que la forme des graphiques seront des carrés.
 
 2.  Quel est l'effet de la fonction `rug()` ?
+
+> La fonction rug() permet d'ajoute en dessous du boxplot des petites barres (une par valeur individuelle). Ca permet de voir visuellement où se concentrent les données
 
 Observer les résultats obtenus par chaque commande.
 
 **b.** Commenter la distribution des valeurs observées en se basant sur les graphiques de la Figure : valeur(s) atypique(s), asymétrie.
 
+> En observant les graphiques, on voit que la majorité des 50 processeurs ont une performance relative comprise entre 0 et 100 : la distribution est donc fortement concentrée vers les faibles valeurs. Le boxplot met clairement en évidence plusieurs valeurs atypiques situées beaucoup plus haut, entre environ 200 et 800, correspondant à quelques processeurs nettement plus performants que les autres.
+>
+> La distribution présente est une asymétrique positive. La queue de la distribution s'étends vers les fortes performances. On peut facilement aperçevoir cette asymétrique dans le boxplot et l'histogramme
+
 **c.** Calculer la performance relative médiane et la performance relative moyenne des valeurs observées en utilisant les fonctions de ***R*** adéquates.
+
+```{r}
+#| output: true
+
+median(cpus)
+mean(cpus)
+```
 
 Est-il plus approprié d'utiliser la médiane ou la moyenne ?
 
+> La médiane et la moyenne diffèrent fortement dans cette distribution. La moyenne est tirée vers le haut à cause des valeurs atypiques, quelques processeurs avec une performance relative très élevée. Ces valeurs extrêmes influencent fortement la moyenne.
+>
+> La médiane, en revanche, n’est pas affectée par ces valeurs atypiques et représente donc mieux la performance « typique » des processeurs. Elle se situe au centre de la distribution et reflète davantage la forte concentration des performances autour de valeurs faibles (entre 0 et environ 75), comme on le voit dans le boxplot et grâce aux marques du rug().
+>
+> Dans ce contexte, il est donc plus approprié d'utiliser la médiance que la moyenne pour décrire la performance relative centrale.
+
 **d.** Déterminer le(s) mode(s) des valeurs observées en complétant les commandes ci-dessous :
+
+```{r}
+#| output: true
+
+tbl <- table(cpus)     # compte les fréquences
+modes <- names(tbl)[tbl == max(tbl)] 
+modes
+```
+
+> On a 3 modes qui apparissent 3 fois chacun. 24, 36 et 66
 
 **e.** Que fait la commande suivante ?
 
@@ -242,9 +271,48 @@ Est-il plus approprié d'utiliser la médiane ou la moyenne ?
 
 1.  ajouter un processeur de performance relative $41$;
 
+    ```{r}
+    #| output: true
+
+    cpus_2 <- c(cpus, 41)
+
+    mean(cpus_2)
+    median(cpus_2)
+    ```
+
+    > Effet sur la moyenne : La moyenne sera légèrement tiréndefinede vers le bas car 41 est inférieure à l’ancienne moyenn
+    >
+    > Effet sur la médiane : La médiane peut légèrement changer selon la position de la nouvelle valeur dans l'ordre des données. Ici, elle pourrait devenir 41 ou rester proche de 42, car c'est proche de l'ancienne médiane.
+
 2.  soustraire $7$ à chaque valeur observée;
 
+    ```{r}
+    #| output: true
+
+    cpus_2 <- cpus - 7
+
+    mean(cpus_2)
+    median(cpus_2)
+    ```
+
+    > Effet sur la moyenne : La moyenne diminue exactement de 7, car on soustrait la même quantité à toutes les observations.
+    >
+    > Effet sur la médiane : La médiane diminue également exactement de 7 pour la même raison
+
 3.  diviser chaque observation par $3$.
+
+    ```{r}
+    #| output: true
+
+    cpus_2 <- cpus / 3
+
+    mean(cpus_2)
+    median(cpus_2)
+    ```
+
+    > Effet sur la moyenne : La moyenne est divisée par 3, car chaue valeur est réduite d'un facteur de 3
+    >
+    > Effet sur la médiane : La médiane est également divisée par 3, pour la même raison
 
 **g.** Calculer l'écart-type des performances relatives une fois avec les valeurs atypiques et une fois sans en utilisant la fonction `sd()`. Les valeurs atypiques peuvent être déterminées à l'aide de la fonction `boxplot()` avec `plot=FALSE` comme argument.
 
