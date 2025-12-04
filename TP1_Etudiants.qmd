@@ -316,7 +316,39 @@ modes
 
 **g.** Calculer l'écart-type des performances relatives une fois avec les valeurs atypiques et une fois sans en utilisant la fonction `sd()`. Les valeurs atypiques peuvent être déterminées à l'aide de la fonction `boxplot()` avec `plot=FALSE` comme argument.
 
+> Pour trouver les valeurs atypiques :
+
+```{r}
+#| output: true
+
+boxplot(cpus, plot=FALSE)
+```
+
+> On voit que les valeurs atypiques sont : 185, 510, 370 et 915.
+>
+> Maintenant créer une autre variable qui ne contient pas les valeurs atypiques
+
+```{r}
+#| output: true
+
+cpus_sans_atypiques <- cpus[cpus<185]
+```
+
+> Calculons l'écart-type avec et sans les valeurs atypiques :
+
+```{r}
+#| output: true
+
+sd(cpus)
+sd(cpus_sans_atypiques)
+
+```
+
 Que constate-t-on ? L'écart-type est-il un indicateur robuste ?
+
+> On constate que l’écart-type est très sensible aux valeurs atypiques. En effet, lorsqu’on ne retire pas les valeurs atypiques, l’écart-type est de 148, soit environ trois fois plus élevé que lorsqu’on les enlève (38). Cela s’explique par le fait que l’écart-type se calcule à partir des carrés des écarts à la moyenne, ce qui amplifie l’effet des valeurs très éloignées.
+>
+> Ainsi, l’écart-type n'est pas un indicateur robuste: il peut être fortement influencé par quelques valeurs extrêmes.
 
 # Exercice 3
 
