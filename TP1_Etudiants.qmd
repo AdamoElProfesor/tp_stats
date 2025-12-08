@@ -389,13 +389,42 @@ On se demande si une différence significative existe entre les deux groupes à 
 
 *Indication :* pour séparer puis enregistrer les notes des étudiants selon les groupes, on peut utiliser les commandes
 
+-   <div>
+
+    ```{r}
+    #| output: true
+
+    examen_groupe_A = examen$note[examen$groupe == "A"]
+    examen_groupe_C = examen$note[examen$groupe == "C"]
+
+    boxplot(examen_groupe_A, examen_groupe_C, names = c("Classe A", "Classe C"))
+    rug(examen_groupe_A, side=2)
+    rug(examen_groupe_C, side=4)
+
+
+    ```
+
+    </div>
+
 **c.** En se basant sur la Figure, existe-t-il une différence significative entre les deux groupes à l'examen de fin d'unité ?
+
+> En se basant uniquement sur les boxplots, on peut observer que le groupe A semble avoir des notes plus élevées que le groupe C, car la médiane du groupe A est plus haute et la boîte (interquartile range) se situe globalement à des valeurs plus élevées.
 
 **d.** Observe-t-on sur les boîtes à moustaches une différence entre les dispersions des deux groupes ?
 
+> Les tailles des boîtes semblent assez similaires, donc l’étendue interquartile est comparable pour les deux classes.
+
 **e.** Calculer les écarts-types des deux groupes à l'aide des fonctions `by()` et `sd()`.
 
+```{r}
+#| output: true
+
+by(examen$note, examen$groupe, function(x) sd(x, na.rm = TRUE))
+```
+
 En se basant sur les écarts-types, existe-t-il une différence en dispersion entre les deux groupes à l'examen de fin d'unité ?
+
+> Oui il y a une différence de dispersion entre les deux groupes. Les notes du groupe C sont plus dispersées que celles du groupe A.
 
 **f.** Que peut-on déduire en comparant les conclusions établies en **c.**, **d.** et **e.** ?
 
