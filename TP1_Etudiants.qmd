@@ -66,13 +66,9 @@ execute:
 
 # Introduction
 
-Donc voilà les objectifs de ce projet ...
+Ce projet fait partie du cours d’analyse exploratoire des données. L’objectif principal est d’apprendre à utiliser le langage **R** pour manipuler des données et créer des graphiques. En faisant des exercices pratiques, on découvre comment explorer des données, calculer des statistiques simples et visualiser les informations importantes.
 
-Il faut pas oublier de bien définir les objectifs ici.
-
-Et a la fin d'ajouter une conclusion et les références utilisées.
-
-Présentation des données pour chaque exercices
+Le projet permet aussi de comprendre les relations entre les variables, par exemple en observant des corrélations ou des tendances dans les graphiques. On apprend à interpréter les résultats et à présenter les données.
 
 # Exercice 1
 
@@ -95,8 +91,6 @@ print(data_files)
 cpus<-scan(file.path(dataDir, "cpus.txt"))
 examen<-read.table(file.path(dataDir, "examen.txt"), header=T)
 ```
-
-Les utilisateurs se chargeront d'adapter les chemins à leur répertoire de travail et à leur système d'exploitation. Les fichiers `cpus.txt` et `examen.txt` sont ainsi accessibles dans ***R*** sous les noms `cpus` et `examen` respectivement.
 
 **c.** Pour voir le contenu de l'objet `cpus`, taper l'instruction
 
@@ -207,6 +201,12 @@ L'objet `cpus` contient les valeurs observées.
 **a.** Constuire un diagramme branche-et-feuilles, une boîte à moustaches et un histogramme des données observées à l'aide des commandes ci-dessous.
 
 ```{r}
+#| output: true
+
+stem(cpus)
+```
+
+```{r}
 #| warning: false
 #| output: true
 
@@ -247,25 +247,28 @@ mean(cpus)
 
 Est-il plus approprié d'utiliser la médiane ou la moyenne ?
 
-> La médiane et la moyenne diffèrent fortement dans cette distribution. La moyenne est tirée vers le haut à cause des valeurs atypiques, quelques processeurs avec une performance relative très élevée. Ces valeurs extrêmes influencent fortement la moyenne.
->
-> La médiane, en revanche, n’est pas affectée par ces valeurs atypiques et représente donc mieux la performance « typique » des processeurs. Elle se situe au centre de la distribution et reflète davantage la forte concentration des performances autour de valeurs faibles (entre 0 et environ 75), comme on le voit dans le boxplot et grâce aux marques du rug().
->
-> Dans ce contexte, il est donc plus approprié d'utiliser la médiance que la moyenne pour décrire la performance relative centrale.
+> La moyenne est fortement influencée par quelques processeurs très performants, ce qui la tire vers le haut. La médiane, moins sensible aux valeurs extrêmes, reflète mieux la performance typique, concentrée entre 0 et 75. Dans ce cas, la médiane est donc plus appropriée que la moyenne pour représenter le centre de la distribution.
 
 **d.** Déterminer le(s) mode(s) des valeurs observées en complétant les commandes ci-dessous :
 
 ```{r}
 #| output: true
 
-tbl <- table(cpus)     # compte les fréquences
-modes <- names(tbl)[tbl == max(tbl)] 
-modes
+n.cpus <- table(cpus)
+as.numeric(names(n.cpus)[n.cpus == max(n.cpus)])
 ```
 
-> On a 3 modes qui apparissent 3 fois chacun. 24, 36 et 66
-
 **e.** Que fait la commande suivante ?
+
+```{r}
+#| output: true
+
+summary(cpus)
+```
+
+> `summary()` est une manière rapide d’avoir un aperçu statistique d’un vecteur ou d’une variable.\
+>
+> Elle fournit des informations comme la valeur minimale, la valeur maximale, la médiane, la moyenne et les quartiles pour les données numériques.
 
 **f.** Décrire l'effet sur la moyenne et sur la médiane des trois interventions suivantes :
 
@@ -280,9 +283,9 @@ modes
     median(cpus_2)
     ```
 
-    > Effet sur la moyenne : La moyenne sera légèrement tiréndefinede vers le bas car 41 est inférieure à l’ancienne moyenn
+    > Effet sur la moyenne **:** La moyenne sera légèrement abaissée, car la nouvelle valeur 41 est inférieure à l’ancienne moyenne.
     >
-    > Effet sur la médiane : La médiane peut légèrement changer selon la position de la nouvelle valeur dans l'ordre des données. Ici, elle pourrait devenir 41 ou rester proche de 42, car c'est proche de l'ancienne médiane.
+    > Effet sur la médiane **:** La médiane peut changer légèrement selon la position de cette nouvelle valeur dans l’ordre des données. Ici, elle pourrait devenir 41 ou rester proche de 42, puisque la valeur ajoutée est proche de l’ancienne médiane.
 
 2.  soustraire $7$ à chaque valeur observée;
 
@@ -297,7 +300,7 @@ modes
 
     > Effet sur la moyenne : La moyenne diminue exactement de 7, car on soustrait la même quantité à toutes les observations.
     >
-    > Effet sur la médiane : La médiane diminue également exactement de 7 pour la même raison
+    > Effet sur la médiane : La médiane diminue également exactement de 7 pour la même raison.
 
 3.  diviser chaque observation par $3$.
 
@@ -310,35 +313,16 @@ modes
     median(cpus_2)
     ```
 
-    > Effet sur la moyenne : La moyenne est divisée par 3, car chaue valeur est réduite d'un facteur de 3
+    > Effet sur la moyenne : La moyenne est divisée par 3, car chaquevaleur est réduite d'un facteur de 3.
     >
-    > Effet sur la médiane : La médiane est également divisée par 3, pour la même raison
+    > Effet sur la médiane : La médiane est également divisée par 3, pour la même raison.
 
 **g.** Calculer l'écart-type des performances relatives une fois avec les valeurs atypiques et une fois sans en utilisant la fonction `sd()`. Les valeurs atypiques peuvent être déterminées à l'aide de la fonction `boxplot()` avec `plot=FALSE` comme argument.
 
-> Pour trouver les valeurs atypiques :
-
 ```{r}
 #| output: true
-
-boxplot(cpus, plot=FALSE)
-```
-
-> On voit que les valeurs atypiques sont : 185, 510, 370 et 915.
->
-> Maintenant créer une autre variable qui ne contient pas les valeurs atypiques
-
-```{r}
-#| output: true
-
+#| 
 cpus_sans_atypiques <- cpus[cpus<185]
-```
-
-> Calculons l'écart-type avec et sans les valeurs atypiques :
-
-```{r}
-#| output: true
-
 sd(cpus)
 sd(cpus_sans_atypiques)
 
@@ -383,32 +367,43 @@ examen %>%
 
 On se demande si une différence significative existe entre les deux groupes à l'examen.
 
-**a.** Tracer les boîtes à moustaches en parallèle en utilisant les commandes suivantes :
+**a.** Tracer les boîtes à moustaches en parallèle en utilisant les commandes suivantes :\
+
+```{r}
+#| output: true
+
+airforceblue<-"#5D8AA8"
+par(pty="s")
+boxplot(note~groupe, data=examen, ylim=c(1,6), xlab="groupe", 
+        varwidth=T, col=airforceblue, main="examen")
+abline(h=4, lty=2)
+```
 
 **b.** Rajouter les bâtonnets des notes des étudiants des deux classes, sur le côté gauche des boîtes à moustaches pour la classe $A$ (`side=2` comme argument de la fonction `rug()`) et sur le côté droite pour la classe $C$ (`side=4` comme argument de la fonction `rug()`).
 
-*Indication :* pour séparer puis enregistrer les notes des étudiants selon les groupes, on peut utiliser les commandes
+```{r}
+#| output: true
+
+note.A<-split(examen$note, examen$groupe)$A
+note.C<-split(examen$note, examen$groupe)$C
+
+airforceblue<-"#5D8AA8"
+par(pty="s")
+boxplot(note~groupe, data=examen, ylim=c(1,6), xlab="groupe", 
+        varwidth=T, col=airforceblue, main="examen")
+abline(h=4, lty=2)
+
+rug(note.A, side=2)
+rug(note.C, side=4)
+```
 
 -   <div>
-
-    ```{r}
-    #| output: true
-
-    examen_groupe_A = examen$note[examen$groupe == "A"]
-    examen_groupe_C = examen$note[examen$groupe == "C"]
-
-    boxplot(examen_groupe_A, examen_groupe_C, names = c("Classe A", "Classe C"))
-    rug(examen_groupe_A, side=2)
-    rug(examen_groupe_C, side=4)
-
-
-    ```
 
     </div>
 
 **c.** En se basant sur la Figure, existe-t-il une différence significative entre les deux groupes à l'examen de fin d'unité ?
 
-> En se basant uniquement sur les boxplots, on peut observer que le groupe A semble avoir des notes plus élevées que le groupe C, car la médiane du groupe A est plus haute et la boîte (interquartile range) se situe globalement à des valeurs plus élevées.
+> En se basant uniquement sur les boxplots, on peut observer que le groupe A semble avoir des notes plus élevées que le groupe C, car la médiane du groupe A est plus haute et la boîte (IQR) se situe globalement à des valeurs plus élevées.
 
 **d.** Observe-t-on sur les boîtes à moustaches une différence entre les dispersions des deux groupes ?
 
@@ -428,9 +423,15 @@ En se basant sur les écarts-types, existe-t-il une différence en dispersion en
 
 **f.** Que peut-on déduire en comparant les conclusions établies en **c.**, **d.** et **e.** ?
 
+> On en déduit que les boxplots ne reflètent pas entièrement la dispersion mesurée par l’écart-type, car ils se concentrent sur les 50 % centraux des données et sont peu sensibles aux valeurs extrêmes. Ainsi, des données peuvent sembler avoir une dispersion similaire visuellement, tout en présentant des écarts-types différents.
+
 **g.** Un autre graphique pour étudier les éventuelles différences entre les deux groupes à l'examen de fin d'unité se trouve dans la Figure.
 
 À votre avis, entre les boîtes à moustaches en parallèle et le graphique tracé ci-dessus, lequel est le plus approprié ?
+
+> Chacun a ses avantages : le boxplot permet de visualiser rapidement la médiane et les valeurs atypiques, tandis que le graphique de densité montre la forme complète de la distribution, ce qui est utile pour comparer plusieurs distributions continues.
+>
+> Si je devais en choisir un, je privilégierais le graphique de densité.
 
 # Exercice 4
 
@@ -452,6 +453,8 @@ Les observations sont lues dans le logiciel à l'aide de la commande
 
 ```{r}
 #| label: lecture des donnees
+#| warning: false
+
 
 library(arules)
 data("AdultUCI")
@@ -460,22 +463,54 @@ data("AdultUCI")
 et les variables qui nous intéressent sont sélectionnées et stockées dans l'objet `dframe` par les commandes
 
 ```{r}
+#| output: false
 #| results: hold
 
 dframe<-AdultUCI[, c("education", "hours-per-week")]
-colnames(dframe)<-c("education", "hours_per_week") # <1> 
+colnames(dframe)<-c("education", "hours_per_week") 
+
 str(dframe)
 ```
 
-1.  Pourquoi ce changement de nom de variable ?
+Pourquoi ce changement de nom de variable ?
+
+> Le changement de nom de variable permet d’éviter l’utilisation du caractère `-`, qui est interprété comme un opérateur arithmétique en R. Renommer la variable avec un underscore rend son utilisation plus simple et évite des erreurs de syntaxe.
 
 Tracer les boîtes à moustaches en parallèle de la Figure dans lesquelles est représenté le temps hebdomadaire consacré au travail par les Américains recensés selon leur formation.
 
+```{r}
+#| output: true
+
+n=dim(na.omit(dframe))[1]
+today<-format(Sys.time(), "%a %b %d %X %Y")
+
+ggplot(dframe, aes(x=hours_per_week, y=education)) + 
+  geom_point(colour="#FFBA49", alpha=0.1, position="jitter") + 
+  geom_boxplot(outlier.size=0, alpha=0.2) + 
+  theme_bw(base_size=12) +
+  theme(
+    legend.position="none", 
+    plot.title=element_text(hjust=0.5, face="bold")) + 
+  labs(
+      color="",
+      fill="",
+      x="hours per week",
+      y="",
+      title=paste("Census Income Database (n = ",n,")", sep=""),
+      #subtitle = "(EE)",
+      caption = today
+      )
+```
+
 Peut-on distinguer deux groupes de types de formation dans ce graphique ? Dans l'affirmative, énumérez-les. Dans la négative, expliquez pourquoi on ne parvient pas à séparer les types de formation en deux groupes.
+
+> On peut distinguer deux grands groupes de formation, les formations allant de "Preschool" à "12th" et le reste.\
+> On peut voir que les premières formations ont toutes une médiane extrêment proche de Q3 et donc une asymétrique négative, tandis que le reste ont une médiane proche de Q1 et donc une asymétrie positive. On pourrait donc comprendre que le second groupe travail davantage.
 
 **b.** Calculer la proportion d'observations contenant des valeurs manquantes en utilisant les commandes ci-dessous.
 
 ```{r}
+#| output: true
 dim(AdultUCI)
 nrows<-nrow(AdultUCI)
 n.missing<-rowSums(is.na(AdultUCI))
@@ -484,15 +519,49 @@ sum(n.missing>0)/nrows
 
 **c.** En se basant sur les boîtes à moustaches en parallèle de la Figure, pour quel type de formation observe-t-on la plus petite dispersion du temps de travail ? Existe-t-il une différence entre les médianes des types de formation ? En donner brièvement la raison.
 
+> La plus petite dispersion du temps de travail est trouvé sur le type de formation "5th-6th".
+>
+> Non, il n'y a pas une grande différence entre les médianes des types de formation, tous autour de 40h/semaine. Ca peut expliqué car quel que soit le niveau de formation, un grande partie des individus travaillent à temps plain (environ 40h/semaine) et donc homogénise les médianes entre les groupes.
+
 **d.** Pour chaque type de formation, on peut déterminer puis afficher à l'écran le temps maximal de travail hebdomadaire. Compléter les commandes ci-dessous pour y parvenir.
+
+```{r}
+
+nx <- by(dframe$hours_per_week, dframe$education, max, na.rm = TRUE)
+```
 
 La formation pour laquelle un temps maximal minimal a été observé se détermine par les commandes
 
+```{r}
+#| output: true
+
+min(nx)
+names(nx)[nx==min(nx)]
+```
+
 Est-ce surprenant ?
+
+> Non pas vraiment. Le niveau "Preschool" est logique. C'est simpliement le groupe avec le moins d'accès à des emplois très exigeants en heures de travail.
 
 **e.** En s'inspirant des commandes utilisées ci-dessus, déterminer la formation pour laquelle la distribution des temps de travail se caractérise par le plus grand écart-type.
 
+```{r}
+#| output: true
+nx_sd <- by(dframe$hours_per_week, dframe$education, sd, na.rm = TRUE)
+max(nx_sd)
+names(nx_sd)[nx_sd == max(nx_sd)]
+```
+
 **f.** Observe-t-on un résultat similaire en utilisant l'étendue interquartiles à l'aide de la fonction `IQR()`?
+
+```{r}
+#| output: true
+nx_iqr <- by(dframe$hours_per_week, dframe$education, IQR, na.rm = TRUE)
+max(nx_iqr)
+names(nx_iqr)[nx_iqr == max(nx_iqr)]
+```
+
+> Le résultat est différent!
 
 ![Les délices de la librairie `ggplot2`](ggplot2_exploratory.png){#fig-ggplot2 fig-pos="h" width="80%"}
 
@@ -502,11 +571,19 @@ Estimer et justifier les valeurs des coefficients de corrélation des séries de
 
 ![Graphiques de nuage de points I.](scatterplot_5.png){#fig-scatterplot1 fig-align="left" width="80%"}
 
+> On observe une corrélation positive proche de 1. Elle est positive car, plus une valeur sur l’axe x est grande, plus il est probable que la valeur correspondante sur l’axe y soit également élevée. La tendance générale est clairement ascendante, ce qui permet d’estimer la corrélation à environ 0,8.
+
 ![Graphiques de nuage de points II.](scatterplot_6.png){#fig-scatterplot2 fig-align="left" width="80%"}
+
+> Ici, les points sont très dispersés et il est difficile de discerner une relation linéaire, ce qui indique une corrélation proche de 0.
 
 ![Graphiques de nuage de points III.](scatterplot_7.png){#fig-scatterplot3 fig-align="left" width="80%"}
 
+> La relation suit une forme parabolique, ce qui est exactement le contraire d’une relation linéaire. On peut donc estimer que la corrélation est proche de 0.
+
 ![Graphiques de nuage de points IV.](scatterplot_8.png){#fig-scatterplot4 fig-align="left" width="80%"}
+
+> Ici, on peut estimer une corrélation d’environ -0,8. La corrélation est négative car, plus une valeur sur l’axe des x est grande, plus il est probable que la valeur correspondante sur l’axe y soit petite. Le nuage de points suit clairement une tendance descendante.
 
 # Exercice 6
 
@@ -518,21 +595,96 @@ Ces données, qui avaient été récoltées par Edgar Anderson, se trouvent déj
 
 **a.** Utiliser les librairies `skimr` et `summarytools` pour afficher les sorties qui permettent d'effectuer une analyse exploratoire des données observées. Pour la librairie `skimr` appliquer la fonction `skim()` à l'objet `iris`; appliquer la fonction `dfSummary()` à l'objet `iris` pour la librairie `summarytools`.
 
+```{r}
+#| warning: false
+
+library(skimr)
+library(summarytools)
+
+```
+
+```{r}
+#| output: true
+
+skim(iris)
+dfSummary(iris)
+```
+
 **b.** La distribution de la largeur du sépale (`Sepal.Width`) est-elle plutôt symétrique ?
+
+> La distribution de la largeur du sépale est plutôt symétrique, la moyenne et la médiane étant très proches et les valeurs réparties de manière équilibrée autour de la médiane.
 
 **c.** La distribution de la longeur du pétale (`Petal.Length`) est-elle unimodale ou bimodale ?
 
+> La distribution est bimodale
+
 **d.** Tracer le nuage de points de la largeur (`Petal.Width`) versus la longueur (`Petal.Length`) des pétales des iris en utilisant les librairies `ggplot2` et `ggforce` et en complétant les commandes ci-dessous.
+
+```{r}
+#| output: true
+
+pCol <- c('#057076', '#ff8301', '#bf5ccb')
+
+plot.iris <- ggplot(iris, aes(x = Petal.Length, y = Petal.Width, col = Species)) +
+  scale_color_manual(values = pCol) +
+  scale_x_continuous(breaks = seq(0.5, 7.5, by = 1), limits = c(0.5, 7.5)) +
+  scale_y_continuous(breaks = seq(-0.5, 3, by = 0.5), limits = c(-0.5, 3)) +
+  labs(title = "Edgar Anderson's Iris Data",
+       x = "Petal Length", 
+       y = "Petal Width") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5),
+        axis.title = element_text(size = 10, vjust = -2),
+        axis.text = element_text(size = 10, vjust = -2)) +
+  geom_point(aes(color = Species), alpha = 0.6, size = 3) +
+  theme_minimal()
+
+plot.iris +
+  ggforce::geom_mark_ellipse(
+    aes(fill = Species, label = Species), 
+    alpha = 0.15, show.legend = FALSE
+  )
+
+```
 
 **e.** En se basant sur le graphique de nuage de points, existe-t-il une relation entre la largeur et la longueur des pétales des iris ? Dans l'affirmative, de quelle nature est-elle ?
 
+> Oui, on observe une corrélation positive entre la largeur et la longueur des pétales. Cependant, cette corrélation est moins marquée pour l’espèce *Virginica* que pour les espèces *Setosa* et *Versicolor*.
+
 **f.** Remarque-t-on des observations inhabituelles dans le graphique de nuage de points ?
 
-**g.** Déterminer la corrélation entre la largeur et la longueur des pétales des iris en utilisant la fonction `cor()`.
+> Non, aucune observation inhabituelle n’est apparente : toutes les données sont bien regroupées selon leurs espèces.
+
+**g.** Déterminer la corrélation entre la largeur et la longueur des pétales des iris en utilisant la fonction `cor()`.\
+
+```{r}
+#| output: true
+cor(iris$Petal.Length, iris$Petal.Width)
+```
 
 **h.** Quelle valeur attribueriez-vous à la longueur des pétales des iris pour distinguer les iris Setosa des deux autres espèces ?
 
+> On peut utiliser la règle suivante : si la longueur du pétale est inférieure à 2,5 cm, l’iris appartient à l’espèce *Setosa* ; sinon, il appartient à l’une des deux autres espèces.
+
 **i.** Des animations peuvent être créées dans ***R*** en utilisant la librairie `gganimate`. Un exemple peut être conçu en utilisant le code ci-dessous.
+
+```{r}
+#| warning: false
+#| output: true
+
+
+library(gganimate)
+
+anim<-plot.iris+ 
+  transition_states(Species,
+                    transition_length = 2,
+                    state_length = 1)
+
+anim + 
+  enter_fade() + 
+  exit_shrink() + 
+  ggtitle('Now showing {closest_state}',
+        subtitle = 'Frame {frame} of {nframes}')
+```
 
 **j.** Installer la librairie `reticulate` qui permet de faire du *Python* à partir de ***RStudio IDE***. Fixer ensuite l'interpréteur Python dans la rubrique *Python* de la boîte de dialogue *Options*. Cette boîte de dialogue s'affiche à l'écran en utilisant le menu *Tools* puis *Global Options...* de ***RStudio IDE***. Si nécessaire, il faut créer un environnement *Python* et y installer les librairies.
 
@@ -542,9 +694,30 @@ Ces données, qui avaient été récoltées par Edgar Anderson, se trouvent déj
 
 <br>
 
-La lecture de l'objet `iris` de ***R*** en Python s'effectue en utilisant la commande
-
 Reconstituer le graphique ci-dessous en utilisant en particulier les librairies `pandas`, `numpy` et le module `matplotlib.pyplot` de la bibliothèque `matplotlib` de Python.
+
+-   <div>
+
+    ```{python}
+    #| output: true
+
+    import pandas as pd
+    import matplotlib.pyplot as plt
+
+    iris = r.iris
+
+
+    colors_map = {'setosa': 'red', 'versicolor': 'green', 'virginica': 'blue'}
+    colors = iris['Species'].map(colors_map)
+
+    plt.scatter(iris['Petal.Length'], iris['Petal.Width'], c=colors)
+    plt.xlabel('Petal Length')
+    plt.ylabel('Petal Width')
+    plt.title("Iris Petal Length vs Width")
+    plt.show()
+    ```
+
+    </div>
 
 # Exercice 7
 
@@ -554,20 +727,75 @@ Les données se trouvent dans la librairie `HSAUR3` de ***R*** qui doit être in
 
 **a.** Reconstituer en utilisant les librairies `ggplot2` et `ggrepel` de ***R*** le graphique de nuage de points ci-dessous entre le nombre de décès dus au cancer de la peau et la latitude. Associée aux points, on a ajouté une couleur différente pour les états côtiers et pour les états intérieurs et une légende indique de quel état il s'agit.
 
+```{r}
+#| output: true
+
+library(HSAUR3)
+library(ggplot2)
+library(ggrepel)
+
+data("USmelanoma", package = "HSAUR3")
+
+USmelanoma$color <- ifelse(USmelanoma$ocean == "yes", "darkred", "black")
+USmelanoma$shape <- ifelse(USmelanoma$ocean == "yes", 17, 16)
+
+ggplot(USmelanoma, aes(x = latitude, y = mortality)) +
+  geom_point(aes(color = color, shape = factor(shape)), size = 3) +
+  geom_text_repel(aes(label = rownames(USmelanoma)),
+                  size = 1.7,           # taille de police réduite
+                  max.overlaps = 20) +
+  scale_color_identity(name = "Type d'état", labels = c("Intérieur", "Côtier"), guide = "legend") +
+  scale_shape_manual(values = c("16" = 16, "17" = 17), guide = "none") +  
+  labs(title = "Décès par mélanome malin vs latitude",
+       x = "Latitude en degrés",
+       y = "Nombre de décès") +
+  theme_minimal()
+
+
+
+```
+
+H
+
 **b.** En se basant sur le graphique, existe-t-il une relation entre le nombre de décès dus au cancer de la peau et la latitude ?
+
+> Il existe une corrélation négative : plus la latitude augmente, moins le nombre de décès est élevé.
 
 **c.** A-t-on plus de décès dus au cancer de la peau dans les états côtiers ou dans les états intérieurs ?
 
-**d.** Tracer le graphique interactif ci-dessous en utilisant la librairie `altair` de *Python*.
+```{r}
+#| output: true
 
-::: {.Conjecture .unnumbered label="Le rapport doit"}
--   être rédigé avec soin en utilisant ***quarto®***;
+aggregate(mortality ~ ocean, data = USmelanoma, mean)
+```
 
--   contenir une introduction dans laquelle se trouve les objectifs de l'analyse de données ainsi qu'une conclusion pour synthétiser le travail pratique;
+> On voit numériquement que les états côtiers ont plus de décès
 
--   contenir les réponses aux questions posées;
+**d.** Tracer le graphique interactif ci-dessous en utilisant la librairie `altair` de *Python*.\
 
--   contenir les commandes de ***R*** utilisées, les résultats et graphiques obtenus;
+```{python}
+import altair as alt
 
--   être rendu sur la page Moodle du cours en format .html ou .pdf avant la date butoir.
-:::
+df = r.USmelanoma
+
+alt.Chart(df).mark_point(size=60).encode(
+    x=alt.X('latitude', title='latitude'),
+    y=alt.Y('mortality', title='mortality'),
+    color=alt.Color('ocean', title='ocean')
+).properties(
+    title='Décès par mélanome malin selon la latitude'
+).interactive()
+
+
+
+```
+
+# Conclusion
+
+Ce projet a été très enrichissant et m’a permis d’acquérir les bases du langage R pour l’analyse exploratoire des données. J’ai appris à manipuler des jeux de données, calculer des statistiques et créer différents types de graphiques.
+
+Je me sens maintenant plus à l’aise pour lire, comprendre et interpréter des graphiques, ainsi que pour les produire. La visualisation m’a aidé à repérer tendances, corrélations et différences entre groupes.
+
+J’ai aussi apprécié l’intégration de Python dans R, qui m’a permis d’explorer les données de façon interactive et de découvrir la complémentarité entre ces deux langages.
+
+Dans l’ensemble, ce projet a renforcé mes compétences pratiques en analyse de données et constitue une bonne base pour aller plus loin.
